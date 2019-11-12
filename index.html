@@ -6,21 +6,26 @@
     <script>
         const HOST = window.location.protocol + "//" + window.location.hostname + ((window.location.port) ? ":" + window.location.port : "");
         function ukazSeznam() {
-            let url = `${HOST}/list`;
+            let url = `${HOST}/chat/shortlist`;
+            if (document.getElementById("celyseznam").checked){
+                url = `${HOST}/chat/list`;
+            }
             fetch(url).then(function(response) {
                 response.text().then(function(text) {
                     let obj = JSON.parse(text);
                     let s = "";
                     for (let o of obj.list) {
-                        s = s + "<span style='color:darkgray'>" + o.time + "</span> <b>" + o.val + "</b><br>";
+                        s = s + "<span style='color:darkgray'>" + o.time + "" + o.nick + "</span> <b>" + o.val + "</b><br>";
                     }
                     document.getElementById("seznam").innerHTML = s;
                 });
             });
         }
         function pridej() {
-            let v = Number(document.getElementById("hodnota").value);
-            let url = `${HOST}/add?value=${v}`;
+            let v = document.getElementById("zpráva").value;
+            let n = document.getElementById("přezdívka").value;
+            document.getElementById("zpráva").value = "";
+            let url = `${HOST}/chat/add?value=${v}&nick=${n}`;
             fetch(url).then(function(response) {
                 response.text().then(function(text) {
                 });
@@ -35,8 +40,11 @@
 
 <h1>Příklad použití modulu <a href="https://github.com/liborsvejda/spaserver" target="_blank">spaserver</a></h1>
 
+<input type="checkbox" id="celyseznam" style="zoom: 300%"> všechny zprávy
 <div id="seznam"></div>
-<input type="number" id="hodnota"><input type="button" value="Přidat" onclick="pridej()">
+<input type="text" id="přezdívka" placeholder="Sem zadej přezdívku">
+<input type="text" id="zpráva" placeholder="Sem zadej zprávu">
+<input type="button" value="Přidat" onclick="pridej()">
 
 </body>
 </html>
